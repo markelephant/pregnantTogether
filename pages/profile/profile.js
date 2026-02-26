@@ -1,66 +1,88 @@
-// pages/profile/profile.js
+const { get } = require('../../utils/request.js');
+
 Page({
-
-  /**
-   * 页面的初始数据
-   */
   data: {
-
+    userInfo: null,
+    isLogin: false
   },
 
-  /**
-   * 生命周期函数--监听页面加载
-   */
-  onLoad(options) {
-
-  },
-
-  /**
-   * 生命周期函数--监听页面初次渲染完成
-   */
-  onReady() {
-
-  },
-
-  /**
-   * 生命周期函数--监听页面显示
-   */
   onShow() {
-
+    this.checkLoginStatus();
   },
 
-  /**
-   * 生命周期函数--监听页面隐藏
-   */
-  onHide() {
-
+  // 检查登录状态
+  checkLoginStatus() {
+    const token = wx.getStorageSync('token');
+    const userInfo = wx.getStorageSync('userInfo');
+    
+    if (token && userInfo) {
+      this.setData({
+        isLogin: true,
+        userInfo: userInfo
+      });
+      this.loadUserInfo();
+    } else {
+      this.setData({
+        isLogin: false,
+        userInfo: null
+      });
+    }
   },
 
-  /**
-   * 生命周期函数--监听页面卸载
-   */
-  onUnload() {
-
+  // 加载用户信息
+  loadUserInfo() {
+    get('/user/info', {}, false).then(res => {
+      this.setData({
+        userInfo: res
+      });
+      wx.setStorageSync('userInfo', res);
+    });
   },
 
-  /**
-   * 页面相关事件处理函数--监听用户下拉动作
-   */
-  onPullDownRefresh() {
-
+  // 登录
+  goToLogin() {
+    wx.navigateTo({
+      url: '/pages/login/login'
+    });
   },
 
-  /**
-   * 页面上拉触底事件的处理函数
-   */
-  onReachBottom() {
-
+  // 退出登录
+  logout() {
+    wx.showModal({
+      title: '提示',
+      content: '确定要退出登录吗？',
+      success: (res) => {
+        if (res.confirm) {
+          wx.removeStorageSync('token');
+          wx.removeStorageSync('userId');
+          wx.removeStorageSync('userInfo');
+          this.setData({
+            isLogin: false,
+            userInfo: null
+          });
+          wx.showToast({ title: '已退出登录', icon: 'success' });
+        }
+      }
+    });
   },
 
-  /**
-   * 用户点击右上角分享
-   */
-  onShareAppMessage() {
+  // 编辑资料
+  editProfile() {
+    wx.showToast({ title: '功能开发中', icon: 'none' });
+  },
 
+  // 我的帖子
+  myPosts() {
+    wx.showToast({ title: '功能开发中', icon: 'none' });
+  },
+
+  // 我的收藏
+  myFavorites() {
+    wx.showToast({ title: '功能开发中', icon: 'none' });
+  },
+
+  // 设置
+  settings() {
+    wx.showToast({ title: '功能开发中', icon: 'none' });
   }
-})
+});

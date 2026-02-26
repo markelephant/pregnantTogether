@@ -1,66 +1,114 @@
-// pages/login/community.js
+const { get, post } = require('../../utils/request.js');
+
 Page({
-
-  /**
-   * 页面的初始数据
-   */
   data: {
-
+    posts: [],
+    pageNum: 1,
+    pageSize: 10,
+    loading: false,
+    hasMore: true,
+    refreshing: false
   },
 
-  /**
-   * 生命周期函数--监听页面加载
-   */
-  onLoad(options) {
-
+  onLoad() {
+    this.loadPosts();
   },
 
-  /**
-   * 生命周期函数--监听页面初次渲染完成
-   */
-  onReady() {
-
-  },
-
-  /**
-   * 生命周期函数--监听页面显示
-   */
   onShow() {
-
+    this.loadPosts();
   },
 
-  /**
-   * 生命周期函数--监听页面隐藏
-   */
-  onHide() {
-
+  // 加载帖子列表
+  loadPosts() {
+    if (this.data.loading) return;
+    
+    this.setData({ loading: true });
+    
+    get('/post/list', {
+      pageNum: this.data.pageNum,
+      pageSize: this.data.pageSize
+    }, false).then(res => {
+      // 处理帖子数据
+      const records = res.records.map(item => {
+        if (item.images) {
+          item.imageList = item.images.split(',');
+        } else {
+          item.imageList = [];
+        }
+        if (item.tags) {
+          item.tagList = item.tags.split(',');
+        } else {
+          item.tagList = [];
+        }
+        if (item.user) {
+          item.userAvatar = item.user.avatarUrl;
+          item.userNickname = item.user.nickname;
+        }
+        return item;
+      });
+      const posts = this.data.refreshing ? records : [...this.data.posts, ...records];
+      this.setData({
+        posts: posts,
+        loading: false,
+        refreshing: false,
+        hasMore: records.length >= this.data.pageSize
+      });
+      wx.stopPullDownRefresh();
+    }).catch(err => {
+      this.setData({ loading: false, refreshing: false });
+      wx.stopPullDownRefresh();
+    });
   },
 
-  /**
-   * 生命周期函数--监听页面卸载
-   */
-  onUnload() {
-
-  },
-
-  /**
-   * 页面相关事件处理函数--监听用户下拉动作
-   */
+  // 下拉刷新
   onPullDownRefresh() {
-
+    this.setData({
+      pageNum: 1,
+      refreshing: true,
+      posts: []
+    });
+    this.loadPosts();
   },
 
-  /**
-   * 页面上拉触底事件的处理函数
-   */
+  // 上拉加载更多
   onReachBottom() {
-
+    if (!this.data.hasMore || this.data.loading) return;
+    this.setData({
+      pageNum: this.data.pageNum + 1
+    });
+    this.loadPosts();
   },
 
-  /**
-   * 用户点击右上角分享
-   */
-  onShareAppMessage() {
+  // 跳转到发帖页面
+  goToCreatePost() {
+    const token = wx.getStorageSync('token');
+    if (!token) {
+      wx.navigateTo({ url: '/pages/login/login' });
+      return;
+    }
+    wx.navigateTo({ url: '/pages/create-post/create-post' });
+  },
 
+  // 跳转到帖子详情
+  goToPostDetail(e) {
+    const postId = e.currentTarget.dataset.id;
+    wx.navigateTo({
+      url: '/pages/post-detail/post-detail?id=' + postId
+    });
+  },
+
+  // 点赞
+  likePost(e) {
+    const postId = e.currentTarget.dataset.id;
+    post('/post/' + postId + '/like', {}, false).then(() => {
+      const posts = this.data.posts.map(post => {
+        if (post.id === postId) {
+          post.likeCount = (post.likeCount || 0) + 1;
+        }
+        return post;
+      });
+      this.setData({ posts });
+      wx.showToast({ title: '点赞成功', icon: 'success' });
+    });
   }
-})
+});

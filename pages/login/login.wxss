@@ -1,1 +1,81 @@
-/* pages/login.wxss */
+.container {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40rpx;
+}
+
+.login-box {
+  width: 100%;
+  max-width: 600rpx;
+  text-align: center;
+}
+
+.logo {
+  margin-bottom: 40rpx;
+}
+
+.logo-img {
+  width: 160rpx;
+  height: 160rpx;
+  border-radius: 50%;
+  background: #fff;
+  padding: 20rpx;
+}
+
+.title {
+  font-size: 48rpx;
+  font-weight: bold;
+  color: #fff;
+  margin-bottom: 20rpx;
+}
+
+.subtitle {
+  font-size: 28rpx;
+  color: rgba(255, 255, 255, 0.8);
+  margin-bottom: 80rpx;
+}
+
+.login-btn-box {
+  margin-bottom: 60rpx;
+}
+
+.login-btn {
+  background: #fff;
+  color: #667eea;
+  border-radius: 50rpx;
+  padding: 30rpx 0;
+  margin-bottom: 30rpx;
+  font-size: 32rpx;
+  font-weight: 500;
+  border: none;
+}
+
+.login-btn::after {
+  border: none;
+}
+
+.guest-btn {
+  background: transparent;
+  color: #fff;
+  border-radius: 50rpx;
+  padding: 30rpx 0;
+  font-size: 32rpx;
+  border: 2rpx solid rgba(255, 255, 255, 0.5);
+}
+
+.guest-btn::after {
+  border: none;
+}
+
+.agreement {
+  font-size: 24rpx;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.agreement-link {
+  color: #fff;
+  text-decoration: underline;
+}

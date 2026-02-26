@@ -1,2 +1,43 @@
-<!--pages/profile/profile.wxml-->
-<text>pages/profile/profile.wxml</text>
+<view class="container">
+  <!-- 未登录状态 -->
+  <view class="login-section" wx:if="{{!isLogin}}">
+    <image class="avatar-placeholder" src="/images/profile.png"></image>
+    <text class="login-tip">登录后享受更多功能</text>
+    <button class="login-btn" bindtap="goToLogin">立即登录</button>
+  </view>
+
+  <!-- 已登录状态 -->
+  <view class="user-section" wx:if="{{isLogin}}">
+    <image class="user-avatar" src="{{userInfo.avatarUrl || '/images/profile.png'}}" mode="aspectFill"></image>
+    <view class="user-info">
+      <text class="user-name">{{userInfo.nickname || '匿名用户'}}</text>
+      <text class="user-bio" wx:if="{{userInfo.bio}}">{{userInfo.bio}}</text>
+      <text class="user-bio" wx:else>点击编辑个人简介</text>
+    </view>
+    <view class="edit-btn" bindtap="editProfile">编辑资料</view>
+  </view>
+
+  <!-- 功能菜单 -->
+  <view class="menu-section">
+    <view class="menu-item" bindtap="myPosts">
+      <image class="menu-icon" src="/images/community.png"></image>
+      <text class="menu-text">我的帖子</text>
+      <text class="menu-arrow">></text>
+    </view>
+    <view class="menu-item" bindtap="myFavorites">
+      <image class="menu-icon" src="/images/home-active.png"></image>
+      <text class="menu-text">我的收藏</text>
+      <text class="menu-arrow">></text>
+    </view>
+    <view class="menu-item" bindtap="settings">
+      <image class="menu-icon" src="/images/checkin.png"></image>
+      <text class="menu-text">设置</text>
+      <text class="menu-arrow">></text>
+    </view>
+  </view>
+
+  <!-- 退出登录 -->
+  <view class="logout-section" wx:if="{{isLogin}}">
+    <button class="logout-btn" bindtap="logout">退出登录</button>
+  </view>
+</view>

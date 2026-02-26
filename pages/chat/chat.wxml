@@ -1,2 +1,35 @@
-<!--pages/chat/chat.wxml-->
-<text>pages/chat/chat.wxml</text>
+<view class="container">
+  <!-- 导航栏 -->
+  <view class="nav-bar">
+    <view class="back-btn" bindtap="goBack">←</view>
+    <text class="nav-title">{{targetNickname}}</text>
+    <view class="placeholder"></view>
+  </view>
+
+  <!-- 消息列表 -->
+  <scroll-view class="message-list" scroll-y scroll-into-view="{{scrollToMessage}}" enhanced show-scrollbar="{{false}}">
+    <view wx:for="{{messages}}" wx:key="*this" id="msg-{{index}}" 
+          class="message-item {{item.fromUserId == userId ? 'self' : 'other'}}">
+      <image class="message-avatar" 
+             src="{{item.fromUserId == userId ? userAvatar : targetAvatar}}" 
+             mode="aspectFill"></image>
+      <view class="message-content">
+        <view class="message-bubble">
+          <text class="message-text">{{item.content}}</text>
+        </view>
+        <text class="message-time">{{item.createTime}}</text>
+      </view>
+    </view>
+  </scroll-view>
+
+  <!-- 输入框 -->
+  <view class="input-bar">
+    <input class="message-input" 
+           placeholder="输入消息..." 
+           value="{{inputValue}}" 
+           bindinput="onInput"
+           confirm-type="send"
+           bindconfirm="sendMessage" />
+    <button class="send-btn" bindtap="sendMessage" disabled="{{inputValue == ''}}">发送</button>
+  </view>
+</view>

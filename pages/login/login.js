@@ -49,9 +49,15 @@ Page({
             const code = loginRes.code;
             
             // 3. 调用后端登录接口
-            post('/user/login', {
-              code: code,
-              userInfo: userInfo
+            // 注意：实际项目中需要先在后端调用微信接口获取openid
+            // 这里模拟openid为code的md5值
+            const openId = this.mockOpenId(code);
+            
+            post('/auth/login', {
+              openId: openId,
+              nickname: userInfo.nickName,
+              avatarUrl: userInfo.avatarUrl,
+              gender: userInfo.gender
             }, false).then(data => {
               wx.hideLoading();
               this.setData({ loading: false });
@@ -105,6 +111,12 @@ Page({
         });
       }
     });
+  },
+
+  // 模拟生成openid（实际项目中应该由后端调用微信接口获取）
+  mockOpenId: function(code) {
+    // 简单的字符串处理模拟openid
+    return 'openid_' + code + '_' + Date.now();
   },
 
   // 跳转到首页（游客模式）

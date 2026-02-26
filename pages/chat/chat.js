@@ -1,66 +1,145 @@
-// pages/chat/chat.js
+const { get, post } = require('../../utils/request.js');
+
+const BASE_URL = 'https://your-domain.com';
+
 Page({
-
-  /**
-   * 页面的初始数据
-   */
   data: {
-
+    targetUserId: null,
+    targetNickname: '',
+    messages: [],
+    inputValue: '',
+    socketOpen: false,
+    scrollToMessage: '',
+    userId: null,
+    userAvatar: '',
+    targetAvatar: ''
   },
 
-  /**
-   * 生命周期函数--监听页面加载
-   */
+  socket: null,
+
   onLoad(options) {
-
+    const targetUserId = options.userId;
+    const targetNickname = options.nickname || '聊天';
+    const userId = wx.getStorageSync('userId');
+    const userInfo = wx.getStorageSync('userInfo') || {};
+    
+    this.setData({ 
+      targetUserId: targetUserId, 
+      targetNickname: targetNickname,
+      userId: userId,
+      userAvatar: userInfo.avatarUrl || '/images/profile.png',
+      targetAvatar: '/images/profile.png'
+    });
+    
+    // 加载历史消息
+    this.loadMessages();
+    
+    // 连接WebSocket
+    this.connectSocket();
   },
 
-  /**
-   * 生命周期函数--监听页面初次渲染完成
-   */
-  onReady() {
-
+  // 返回上一页
+  goBack() {
+    wx.navigateBack();
   },
 
-  /**
-   * 生命周期函数--监听页面显示
-   */
-  onShow() {
-
-  },
-
-  /**
-   * 生命周期函数--监听页面隐藏
-   */
-  onHide() {
-
-  },
-
-  /**
-   * 生命周期函数--监听页面卸载
-   */
   onUnload() {
-
+    // 关闭WebSocket
+    if (this.socket) {
+      wx.closeSocket();
+    }
   },
 
-  /**
-   * 页面相关事件处理函数--监听用户下拉动作
-   */
-  onPullDownRefresh() {
-
+  // 加载历史消息
+  loadMessages() {
+    get('/message/history/' + this.data.targetUserId, {}, false).then(res => {
+      this.setData({
+        messages: res,
+        scrollToMessage: 'msg-' + (res.length - 1)
+      });
+    });
   },
 
-  /**
-   * 页面上拉触底事件的处理函数
-   */
-  onReachBottom() {
+  // 连接WebSocket
+  connectSocket() {
+    const token = wx.getStorageSync('token');
+    if (!token) return;
 
+    const socketUrl = BASE_URL.replace('https', 'wss') + '/ws/chat/' + token;
+    
+    this.socket = wx.connectSocket({
+      url: socketUrl
+    });
+
+    wx.onSocketOpen(() => {
+      console.log('WebSocket连接已打开');
+      this.setData({ socketOpen: true });
+    });
+
+    wx.onSocketMessage((res) => {
+      const data = JSON.parse(res.data);
+      if (data.type === 'message') {
+        const messages = [...this.data.messages, {
+          fromUserId: data.fromUserId,
+          content: data.content,
+          createTime: data.createTime
+        }];
+        this.setData({
+          messages: messages,
+          scrollToMessage: 'msg-' + (messages.length - 1)
+        });
+      }
+    });
+
+    wx.onSocketClose(() => {
+      console.log('WebSocket连接已关闭');
+      this.setData({ socketOpen: false });
+    });
+
+    wx.onSocketError((err) => {
+      console.error('WebSocket错误:', err);
+    });
   },
 
-  /**
-   * 用户点击右上角分享
-   */
-  onShareAppMessage() {
+  // 输入消息
+  onInput(e) {
+    this.setData({ inputValue: e.detail.value });
+  },
 
+  // 发送消息
+  sendMessage() {
+    const content = this.data.inputValue.trim();
+    if (!content) return;
+
+    const userId = wx.getStorageSync('userId');
+    
+    // 通过WebSocket发送
+    if (this.data.socketOpen) {
+      wx.sendSocketMessage({
+        data: JSON.stringify({
+          toUserId: this.data.targetUserId,
+          content: content
+        })
+      });
+    } else {
+      // WebSocket未连接时通过HTTP发送
+      post('/message/send', {
+        toUserId: this.data.targetUserId,
+        content: content
+      }, false);
+    }
+
+    // 本地添加消息
+    const messages = [...this.data.messages, {
+      fromUserId: userId,
+      content: content,
+      createTime: new Date().toISOString()
+    }];
+
+    this.setData({
+      messages: messages,
+      inputValue: '',
+      scrollToMessage: 'msg-' + (messages.length - 1)
+    });
   }
-})
+});

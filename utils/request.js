@@ -1,6 +1,6 @@
 // 微信小程序环境下的请求封装
 
-const BASE_URL = 'https://your-domain.com/api'; // 替换为实际域名
+const BASE_URL = 'http://localhost:8080/api'; // 替换为实际后端域名
 const TOKEN_KEY = 'token';
 
 // 显示加载提示

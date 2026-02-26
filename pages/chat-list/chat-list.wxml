@@ -1,2 +1,36 @@
-<!--pages/chat-list/chat-list.wxml-->
-<text>pages/chat-list/chat-list.wxml</text>
+<view class="container">
+  <!-- 未登录提示 -->
+  <view class="login-tip" wx:if="{{!loading && sessions.length === 0}}">
+    <image class="tip-image" src="/images/chat.png"></image>
+    <text class="tip-text">登录后查看消息列表</text>
+    <button class="login-btn" bindtap="goToLogin">去登录</button>
+  </view>
+
+  <!-- 会话列表 -->
+  <view class="session-list" wx:if="{{sessions.length > 0}}">
+    <view wx:for="{{sessions}}" wx:key="id" class="session-item" 
+          bindtap="goToChat" 
+          data-userid="{{item.targetUserId}}" 
+          data-nickname="{{item.targetUserNickname}}">
+      <image class="avatar" src="{{item.targetUserAvatar || '/images/profile.png'}}" mode="aspectFill"></image>
+      <view class="session-info">
+        <view class="session-header">
+          <text class="nickname">{{item.targetUserNickname || '匿名用户'}}</text>
+          <text class="time">{{item.updateTime}}</text>
+        </view>
+        <view class="session-body">
+          <text class="last-message">{{item.lastMessage || '暂无消息'}}</text>
+          <view class="unread-badge" wx:if="{{item.unreadCount > 0}}">
+            <text>{{item.unreadCount > 99 ? '99+' : item.unreadCount}}</text>
+          </view>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 空状态 -->
+  <view class="empty-state" wx:if="{{!loading && sessions.length === 0}}">
+    <image class="empty-image" src="/images/chat.png"></image>
+    <text class="empty-text">还没有聊天记录</text>
+  </view>
+</view>

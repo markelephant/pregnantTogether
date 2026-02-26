@@ -1,5 +1,26 @@
-<!--pages/login.wxml-->
-<text>pages/login.wxml</text>
-<view>
-login
+<view class="container">
+  <view class="login-box">
+    <view class="logo">
+      <image src="/images/home.png" mode="aspectFit" class="logo-img"></image>
+    </view>
+    <view class="title">孕妈社区</view>
+    <view class="subtitle">记录美好孕期，分享育儿经验</view>
+    
+    <view class="login-btn-box">
+      <button class="login-btn" bindtap="wxLogin" disabled="{{loading}}">
+        <text class="btn-text">{{loading ? '登录中...' : '微信一键登录'}}</text>
+      </button>
+      
+      <button class="guest-btn" bindtap="goToHome">
+        <text class="btn-text">游客浏览</text>
+      </button>
+    </view>
+    
+    <view class="agreement">
+      <text class="agreement-text">登录即表示您同意</text>
+      <text class="agreement-link">《用户协议》</text>
+      <text class="agreement-text">和</text>
+      <text class="agreement-link">《隐私政策》</text>
+    </view>
+  </view>
 </view>

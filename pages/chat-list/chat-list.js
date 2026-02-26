@@ -1,66 +1,62 @@
-// pages/chat-list/chat-list.js
+const { get } = require('../../utils/request.js');
+
 Page({
-
-  /**
-   * 页面的初始数据
-   */
   data: {
-
+    sessions: [],
+    loading: false
   },
 
-  /**
-   * 生命周期函数--监听页面加载
-   */
-  onLoad(options) {
-
+  onLoad() {
+    this.loadSessions();
   },
 
-  /**
-   * 生命周期函数--监听页面初次渲染完成
-   */
-  onReady() {
-
-  },
-
-  /**
-   * 生命周期函数--监听页面显示
-   */
   onShow() {
-
+    this.loadSessions();
   },
 
-  /**
-   * 生命周期函数--监听页面隐藏
-   */
-  onHide() {
+  // 加载会话列表
+  loadSessions() {
+    const token = wx.getStorageSync('token');
+    if (!token) return;
 
+    this.setData({ loading: true });
+    get('/message/sessions', {}, false).then(res => {
+      // 处理会话数据
+      const sessions = res.map(item => {
+        if (item.targetUser) {
+          item.targetUserAvatar = item.targetUser.avatarUrl;
+          item.targetUserNickname = item.targetUser.nickname;
+        }
+        return item;
+      });
+      this.setData({
+        sessions: sessions,
+        loading: false
+      });
+    }).catch(() => {
+      this.setData({ loading: false });
+    });
   },
 
-  /**
-   * 生命周期函数--监听页面卸载
-   */
-  onUnload() {
-
+  // 跳转到聊天页面
+  goToChat(e) {
+    const userId = e.currentTarget.dataset.userid;
+    const nickname = e.currentTarget.dataset.nickname;
+    wx.navigateTo({
+      url: '/pages/chat/chat?userId=' + userId + '&nickname=' + nickname
+    });
   },
 
-  /**
-   * 页面相关事件处理函数--监听用户下拉动作
-   */
+  // 跳转到登录页
+  goToLogin() {
+    wx.navigateTo({
+      url: '/pages/login/login'
+    });
+  },
+
+  // 下拉刷新
   onPullDownRefresh() {
-
-  },
-
-  /**
-   * 页面上拉触底事件的处理函数
-   */
-  onReachBottom() {
-
-  },
-
-  /**
-   * 用户点击右上角分享
-   */
-  onShareAppMessage() {
-
+    this.loadSessions();
+    wx.stopPullDownRefresh();
   }
-})
+});
