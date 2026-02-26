@@ -1,0 +1,108 @@
+<view class="container">
+  <!-- 日历卡片 -->
+  <view class="calendar-card">
+    <view class="calendar-header">
+      <text class="month">{{currentDate.slice(0,7)}}</text>
+    </view>
+    
+    <view class="weekdays">
+      <view wx:for="{{weekDays}}" wx:key="index" class="weekday">{{item}}</view>
+    </view>
+    
+    <view class="calendar-grid">
+      <view wx:for="{{calendarDays}}" wx:key="index" class="calendar-day 
+            {{item.isEmpty ? 'empty' : ''}} 
+            {{item.isToday ? 'today' : ''}} 
+            {{item.isSelected ? 'selected' : ''}}"
+            data-date="{{item.fullDate}}" 
+            bindtap="selectDate">
+        <!-- 非空日期显示内容 -->
+        <block wx:if="{{!item.isEmpty}}">
+          <text>{{item.date}}</text>
+          <view class="checkin-dot {{item.hasCheckin ? 'active' : ''}}" wx:if="{{item.hasCheckin}}"></view>
+        </block>
+      </view>
+    </view>
+  </view>
+  
+  <!-- 打卡类型卡片 -->
+  <view class="checkin-types">
+    <view class="section-title">今日打卡</view>
+    <view class="types-grid">
+      <view wx:for="{{checkinTypes}}" wx:key="id" class="type-item" 
+            data-type="{{item}}" bindtap="showAddModal">
+        <view class="type-icon">{{item.icon}}</view>
+        <text class="type-name">{{item.name}}</text>
+      </view>
+    </view>
+  </view>
+  
+  <!-- 今日记录 -->
+  <view class="today-records" wx:if="{{todayRecords.length > 0}}">
+    <view class="section-title">今日记录</view>
+    <view wx:for="{{todayRecords}}" wx:key="id" class="record-item">
+      <view class="record-icon">{{checkinTypes[item.type-1].icon}}</view>
+      <view class="record-content">
+        <text class="record-type">{{checkinTypes[item.type-1].name}}</text>
+        <text class="record-value">
+          <block wx:if="{{item.type === 1}}">{{item.weight}} kg</block>
+          <block wx:elif="{{item.type === 2}}">{{item.fetalMovementCount}} 次</block>
+          <block wx:elif="{{item.type === 3}}">{{item.systolicPressure}}/{{item.diastolicPressure}} mmHg</block>
+          <block wx:elif="{{item.type === 4}}">{{item.bloodSugar}} mmol/L</block>
+          <block wx:elif="{{item.type === 5}}">
+            {{['很差','较差','一般','较好','很好'][item.mood-1]}}
+          </block>
+          <block wx:elif="{{item.type === 6}}">{{item.fetalHeartRate}} 次/分</block>
+        </text>
+        <text class="record-time">{{item.createTime.slice(11,16)}}</text>
+      </view>
+    </view>
+  </view>
+  
+  <!-- 今日无记录提示 -->
+  <view class="empty-records" wx:else>
+    <image src="/images/empty.png" mode="aspectFit" class="empty-image"></image>
+    <text class="empty-text">今天还没有打卡记录哦</text>
+  </view>
+  
+  <!-- 添加打卡弹窗 -->
+  <view class="modal {{showAddModal ? 'show' : ''}}">
+    <view class="modal-mask" bindtap="closeModal"></view>
+    <view class="modal-content" wx:if="{{showAddModal}}">
+      <view class="modal-header">
+        <!-- <text>添加{{selectedType?.name}}记录</text> -->
+        <!-- <text class="close-btn" bindtap="closeModal">✕</text> -->
+      </view>
+      
+      <view class="modal-body">
+        <!-- 数值输入（除心情外） -->
+        <!-- <view class="input-group" wx:if="{{selectedType?.id !== 5}}">
+          <text class="label">{{selectedType?.name}}{{selectedType?.unit ? '('+selectedType?.unit+')' : ''}}</text>
+          <input type="digit" placeholder="请输入数值" value="{{inputValue}}" bindinput="onInputChange" />
+        </view> -->
+        
+        <!-- 心情选择器 -->
+        <!-- <view class="input-group" wx:if="{{selectedType?.id === 5}}">
+          <text class="label">心情指数</text>
+          <picker range="{{['很差','较差','一般','较好','很好']}}" bindchange="onMoodChange" value="{{moodIndex}}">
+            <view class="picker">
+              <block wx:if="{{moodText}}">{{moodText}}</block>
+              <block wx:else>请选择心情</block>
+            </view>
+          </picker>
+        </view> -->
+        
+        <!-- 备注输入 -->
+        <view class="input-group">
+          <text class="label">备注</text>
+          <input placeholder="选填" value="{{remark}}" bindinput="onRemarkChange" />
+        </view>
+      </view>
+      
+      <view class="modal-footer">
+        <button class="cancel-btn" bindtap="closeModal">取消</button>
+        <button class="confirm-btn" bindtap="submitCheckin">确认</button>
+      </view>
+    </view>
+  </view>
+</view>
