@@ -1,0 +1,204 @@
+### 孕妈社区 API 测试脚本
+### 使用 VS Code REST Client 插件运行
+
+### 基础配置
+@baseUrl = http://localhost:8080/api
+@contentType = application/json
+
+### ========== 认证接口 ==========
+
+### 1. 登录/注册
+POST {{baseUrl}}/auth/login
+Content-Type: {{contentType}}
+
+{
+  "openId": "test_openid_123",
+  "nickname": "测试用户",
+  "avatarUrl": "https://example.com/avatar.jpg",
+  "gender": 2
+}
+
+### 保存返回的token（手动替换）
+@token = Bearer your_token_here
+
+### ========== 用户接口 ==========
+
+### 2. 获取用户信息
+GET {{baseUrl}}/user/info
+Authorization: {{token}}
+
+### 3. 更新用户信息
+PUT {{baseUrl}}/user/info
+Content-Type: {{contentType}}
+Authorization: {{token}}
+
+{
+  "nickname": "更新后的昵称",
+  "avatarUrl": "https://example.com/new-avatar.jpg",
+  "phone": "13800138000",
+  "dueDate": "2024-06-01",
+  "pregnancyWeek": 20,
+  "bio": "这是一个测试简介"
+}
+
+### ========== 打卡接口 ==========
+
+### 4. 获取打卡日期列表
+GET {{baseUrl}}/checkin/1/calendar?year=2024&month=1
+Authorization: {{token}}
+
+### 5. 获取某天的打卡记录
+GET {{baseUrl}}/checkin/1/daily?date=2024-01-01
+Authorization: {{token}}
+
+### 6. 添加体重打卡记录
+POST {{baseUrl}}/checkin
+Content-Type: {{contentType}}
+Authorization: {{token}}
+
+{
+  "type": 1,
+  "recordDate": "2024-01-01",
+  "weight": 60.5,
+  "remark": "今天体重正常"
+}
+
+### 7. 添加胎动打卡记录
+POST {{baseUrl}}/checkin
+Content-Type: {{contentType}}
+Authorization: {{token}}
+
+{
+  "type": 2,
+  "recordDate": "2024-01-01",
+  "fetalMovementCount": 15,
+  "remark": "胎动活跃"
+}
+
+### 8. 添加血压打卡记录
+POST {{baseUrl}}/checkin
+Content-Type: {{contentType}}
+Authorization: {{token}}
+
+{
+  "type": 3,
+  "recordDate": "2024-01-01",
+  "systolicPressure": 120,
+  "diastolicPressure": 80,
+  "remark": "血压正常"
+}
+
+### 9. 添加血糖打卡记录
+POST {{baseUrl}}/checkin
+Content-Type: {{contentType}}
+Authorization: {{token}}
+
+{
+  "type": 4,
+  "recordDate": "2024-01-01",
+  "bloodSugar": 5.5,
+  "remark": "血糖正常"
+}
+
+### 10. 添加心情打卡记录
+POST {{baseUrl}}/checkin
+Content-Type: {{contentType}}
+Authorization: {{token}}
+
+{
+  "type": 5,
+  "recordDate": "2024-01-01",
+  "mood": 4,
+  "remark": "今天心情不错"
+}
+
+### 11. 添加胎心打卡记录
+POST {{baseUrl}}/checkin
+Content-Type: {{contentType}}
+Authorization: {{token}}
+
+{
+  "type": 6,
+  "recordDate": "2024-01-01",
+  "fetalHeartRate": 140,
+  "remark": "胎心正常"
+}
+
+### ========== 帖子接口 ==========
+
+### 12. 获取帖子列表（无需登录）
+GET {{baseUrl}}/post/list?pageNum=1&pageSize=10
+
+### 13. 获取帖子详情（无需登录）
+GET {{baseUrl}}/post/1
+
+### 14. 发布帖子
+POST {{baseUrl}}/post
+Content-Type: {{contentType}}
+Authorization: {{token}}
+
+{
+  "title": "测试帖子标题",
+  "content": "这是帖子的正文内容，可以写很多字...",
+  "images": "https://example.com/image1.jpg,https://example.com/image2.jpg",
+  "tags": "孕期,经验分享"
+}
+
+### 15. 点赞帖子
+POST {{baseUrl}}/post/1/like
+Authorization: {{token}}
+
+### ========== 评论接口 ==========
+
+### 16. 获取帖子评论（无需登录）
+GET {{baseUrl}}/comment/post/1
+
+### 17. 发表评论
+POST {{baseUrl}}/comment
+Content-Type: {{contentType}}
+Authorization: {{token}}
+
+{
+  "postId": 1,
+  "content": "这是一条测试评论",
+  "parentId": null
+}
+
+### ========== 消息接口 ==========
+
+### 18. 获取聊天会话列表
+GET {{baseUrl}}/message/sessions
+Authorization: {{token}}
+
+### 19. 获取消息历史
+GET {{baseUrl}}/message/history/2
+Authorization: {{token}}
+
+### 20. 发送消息
+POST {{baseUrl}}/message/send
+Content-Type: {{contentType}}
+Authorization: {{token}}
+
+{
+  "toUserId": 2,
+  "content": "你好，这是一条测试消息"
+}
+
+### 21. 获取未读消息数
+GET {{baseUrl}}/message/unread/count
+Authorization: {{token}}
+
+### ========== 文件上传接口 ==========
+
+### 22. 上传图片（需要使用 form-data 格式）
+### 注意：这个请求需要使用其他工具（如 Postman）测试，因为 REST Client 对文件上传支持有限
+POST {{baseUrl}}/upload/image
+Content-Type: multipart/form-data; boundary=----WebKitFormBoundary
+Authorization: {{token}}
+
+------WebKitFormBoundary
+Content-Disposition: form-data; name="file"; filename="test.jpg"
+Content-Type: image/jpeg
+
+< ./test.jpg
+------WebKitFormBoundary--

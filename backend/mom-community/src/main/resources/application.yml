@@ -45,6 +45,11 @@ jwt:
   secret: your-secret-key-here-mom-community-jwt-token
   expiration: 86400000
 
+# 文件上传配置
+upload:
+  path: /tmp/uploads
+  url-prefix: http://localhost:8080/uploads
+
 logging:
   level:
     com.momcommunity: debug
