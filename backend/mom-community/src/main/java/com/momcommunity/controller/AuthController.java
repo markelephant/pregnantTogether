@@ -26,10 +26,10 @@ public class AuthController {
         Integer gender = (Integer) params.get("gender");
         
         // 方式1: 使用 code 换取 openid（推荐，需要配置微信 appid 和 secret）
-        // String openId = wxAuthService.getOpenId(code);
+         String openId = wxAuthService.getOpenId(code);
         
         // 方式2: 前端直接传 openid（测试用，不安全）
-        String openId = (String) params.get("openId");
+//        String openId = (String) params.get("openId");
         
         if (openId == null || openId.isEmpty()) {
             return Result.error("登录失败，无法获取用户标识");
