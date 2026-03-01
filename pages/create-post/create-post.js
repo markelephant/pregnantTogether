@@ -13,12 +13,13 @@ Page({
 
   // 标题输入
   onTitleInput(e) {
-    this.setData({ title: e.detail.value });
+    const value = e.detail.value || '';
+    this.setData({ title: value });
   },
 
   // 内容输入
   onContentInput(e) {
-    const content = e.detail.value;
+    const content = e.detail.value || '';
     this.setData({ 
       content: content,
       contentLen: content.length
@@ -55,7 +56,8 @@ Page({
 
   // 标签输入
   onTagInput(e) {
-    this.setData({ tagInput: e.detail.value });
+    const value = e.detail.value || '';
+    this.setData({ tagInput: value });
   },
 
   // 添加标签

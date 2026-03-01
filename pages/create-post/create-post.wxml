@@ -1,12 +1,30 @@
 <view class="container">
   <!-- 标题输入 -->
   <view class="input-group">
-    <input class="title-input" placeholder="添加标题（可选）" value="{{title}}" bindinput="onTitleInput" />
+    <input 
+      class="title-input" 
+      placeholder="添加标题（可选）" 
+      value="{{title}}" 
+      bindinput="onTitleInput" 
+      confirm-type="next"
+      maxlength="50"
+    />
   </view>
 
   <!-- 内容输入 -->
-  <view class="input-group">
-    <textarea class="content-input" placeholder="分享你的孕期故事..." value="{{content}}" bindinput="onContentInput" maxlength="1000" />
+  <view class="input-group content-group">
+    <textarea 
+      class="content-input" 
+      placeholder="分享你的孕期故事..." 
+      value="{{content}}" 
+      bindinput="onContentInput" 
+      maxlength="1000"
+      show-confirm-bar="{{false}}"
+      cursor-spacing="20"
+      adjust-position="{{true}}"
+      fixed="{{false}}"
+      disable-default-padding="{{true}}"
+    />
     <text class="word-count">{{contentLen}}/1000</text>
   </view>
 
@@ -33,7 +51,15 @@
         <text class="delete-tag" bindtap="deleteTag" data-index="{{index}}">×</text>
       </view>
       <view class="tag-input-box" wx:if="{{tags.length < 5}}">
-        <input class="tag-input" placeholder="输入标签" value="{{tagInput}}" bindinput="onTagInput" bindconfirm="addTag" />
+        <input 
+          class="tag-input" 
+          placeholder="输入标签" 
+          value="{{tagInput}}" 
+          bindinput="onTagInput" 
+          bindconfirm="addTag"
+          confirm-type="done"
+          maxlength="10"
+        />
         <text class="add-tag-btn" bindtap="addTag">+</text>
       </view>
     </view>

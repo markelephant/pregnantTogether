@@ -116,7 +116,7 @@ Page({
   // 模拟生成openid（实际项目中应该由后端调用微信接口获取）
   mockOpenId: function(code) {
     // 简单的字符串处理模拟openid
-    return 'openid_' + code + '_' + Date.now();
+    return 'openid_' + '1234test';
   },
 
   // 跳转到首页（游客模式）

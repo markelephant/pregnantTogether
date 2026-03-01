@@ -70,27 +70,27 @@
     <view class="modal-mask" bindtap="closeModal"></view>
     <view class="modal-content" wx:if="{{showAddModal}}">
       <view class="modal-header">
-        <!-- <text>添加{{selectedType?.name}}记录</text> -->
-        <!-- <text class="close-btn" bindtap="closeModal">✕</text> -->
+        <text>添加{{selectedTypeName}}记录</text>
+        <text class="close-btn" bindtap="closeModal">✕</text>
       </view>
       
       <view class="modal-body">
         <!-- 数值输入（除心情外） -->
-        <!-- <view class="input-group" wx:if="{{selectedType?.id !== 5}}">
-          <text class="label">{{selectedType?.name}}{{selectedType?.unit ? '('+selectedType?.unit+')' : ''}}</text>
+        <view class="input-group" wx:if="{{selectedTypeId !== 5}}">
+          <text class="label">{{selectedTypeName}}{{selectedTypeUnit ? '('+selectedTypeUnit+')' : ''}}</text>
           <input type="digit" placeholder="请输入数值" value="{{inputValue}}" bindinput="onInputChange" />
-        </view> -->
+        </view>
         
         <!-- 心情选择器 -->
-        <!-- <view class="input-group" wx:if="{{selectedType?.id === 5}}">
+        <view class="input-group" wx:if="{{selectedTypeId === 5}}">
           <text class="label">心情指数</text>
-          <picker range="{{['很差','较差','一般','较好','很好']}}" bindchange="onMoodChange" value="{{moodIndex}}">
+          <picker range="{{moodOptions}}" bindchange="onMoodChange" value="{{moodIndex}}">
             <view class="picker">
               <block wx:if="{{moodText}}">{{moodText}}</block>
               <block wx:else>请选择心情</block>
             </view>
           </picker>
-        </view> -->
+        </view>
         
         <!-- 备注输入 -->
         <view class="input-group">

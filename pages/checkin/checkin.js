@@ -155,6 +155,9 @@ Page({
     this.setData({
       showAddModal: true,
       selectedType: type,
+      selectedTypeId: type.id,
+      selectedTypeName: type.name,
+      selectedTypeUnit: type.unit,
       inputValue: '',
       remark: '',
       moodIndex: 0,
@@ -167,6 +170,9 @@ Page({
     this.setData({
       showAddModal: false,
       selectedType: null,
+      selectedTypeId: null,
+      selectedTypeName: '',
+      selectedTypeUnit: '',
       inputValue: '',
       remark: '',
       moodIndex: 0,
